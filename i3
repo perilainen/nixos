@@ -30,6 +30,7 @@ exec --no-startup-id dex --autostart --environment i3
 # screen before suspend. Use loginctl lock-session to lock your screen.
 exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
 
+exec_always --no-startup-id polybar
 # NetworkManager is the most popular way to manage wireless networks on Linux,
 # and nm-applet is a desktop environment-independent system tray GUI for it.
 exec --no-startup-id nm-applet
@@ -49,6 +50,9 @@ bindsym $mod+Return exec kitty
 
 # kill focused window
 bindsym $mod+w kill
+
+bindsym $mod+o exec rofi -show run
+bindsym $mod+p exec rofi -show window
 
 # start dmenu (a program launcher)
 bindsym $mod+d exec --no-startup-id dmenu_run
@@ -181,6 +185,6 @@ bindsym $mod+r mode "resize"
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
-bar {
-        status_command i3status
-}
+# bar {
+        # status_command i3status
+# }

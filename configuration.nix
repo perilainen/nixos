@@ -2,8 +2,9 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
 
+
+{ config, pkgs, ... }:
 let
   home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-22.05.tar.gz";
 in
@@ -12,6 +13,7 @@ in
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
     (import "${home-manager}/nixos")
+ #   ./gnome.nix
     ];
 
   # Use the systemd-boot EFI boot loader.
@@ -34,36 +36,56 @@ in
   # i18n.defaultLocale = "en_US.UTF-8";
   # console = {
   #   font = "Lat2-Terminus16";
-  #   keyMap = "us";
+  #  keyMap = "us";
   #   useXkbConfig = true; # use xkbOptions in tty.
   # };
 
   # Enable the X11 windowing system.
+  #environment.gnome.excludePackages  = (with pkgs; [
+   # gnome-photos
+   # gnome-tour]);
   services.xserver = {
     dpi = 220;
     enable = true;
-    layout = "us";
+    layout = "us,se";
+    xkbOptions = "grp:win_space_toggle";
+  #  xkbVariant = "altgr-intl";
+    /* xbdModel = "pc105"; */
     desktopManager = {
       xterm.enable = false;
       wallpaper.mode = "fill";
+   #   gnome.enable = true;
+      #gnome.flashback.enableMetacity= true;
+
+
     };
     displayManager = {
+    #  gdm.enable = true;
+    #  gdm.wayland = false;
       defaultSession = "none+i3";
       lightdm.enable = true;
     };
-    windowManager = {
-      i3.enable = true;
-      i3.extraPackages = with pkgs; [
+    windowManager.i3 = {
+    #  gnome.enable = true;
+    enable = true;
+    package = pkgs.i3-gaps;
+      extraPackages = with pkgs; [
         dmenu
-	i3status
-	i3lock
+        i3status
+        i3lock
+        polybar
       ];
     };
     libinput.enable = true;
 };
+#services.dbus.packages = [pkgs.dconf];
+#services.udev.packages = [pkgs.gnome3.gnome-settings-daemon];
+#hardware.video.hidpi.enable = true;
+
 
 
   
+
 
   # Configure keymap in X11
   # services.xserver.layout = "us";
@@ -76,7 +98,9 @@ in
   # services.printing.enable = true;
 
   # Enable sound.
-  sound = {
+
+
+sound = {
     enable = true;
     extraConfig = ''
       pcm.!default {
@@ -107,6 +131,7 @@ services.pipewire = {
       ];
     };
   };
+  hardware.pulseaudio.enable = false;
   hardware.pulseaudio.extraClientConf = ''
     default-server=unix:/tmp/pulse-for-all
   '';
@@ -115,11 +140,13 @@ services.pipewire = {
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
+environment.variables.EDITOR = "nvim";
+
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
    users.users.pejo= {
      isNormalUser = true;
-     extraGroups = [ "wheel" "docker"]; # Enable ‘sudo’ for the user.
+     extraGroups = [ "wheel" "docker" "root"]; # Enable ‘sudo’ for the user.
      packages = with pkgs; [
      ];
    };
@@ -134,21 +161,30 @@ services.pipewire = {
      #build-essential
      #libssl1.0.0
      #libasound2
+     dmenu
+     gnome.gnome-flashback
      tmux
      #SDL
      mpv
      nerdfonts
      pulseaudioFull
      rustup
+    # gcc
+    llvm
+    libllvm
+    # libclang
+    clang-tools
+    # llvmPackages.libclang
+     protobuf
+    # clang
      (writeShellScriptBin "xrandr-auto" ''
      xrandr --output Virtual-1 --auto
      '')
    ];
+   programs.ssh.startAgent = true;
    programs.git= {
      enable = true;
      };
-
-
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -158,6 +194,12 @@ services.pipewire = {
   #   enableSSHSupport = true;
   # };
   security.rtkit.enable = true;
+  #security.pam.services.lightdm.enable = true;
+
+  services.gnome = {
+    gnome-keyring.enable = true;
+    };
+
 
   # List services that you want to enable:
 
@@ -181,13 +223,13 @@ services.pipewire = {
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "22.05"; # Did you read the comment?
+system.stateVersion = "22.05"; # Did you read the comment?
 nix.package = pkgs.nixUnstable;
- 		nix.extraOptions = "experimental-features = nix-command flakes";
-   			services.openssh.enable = true;
- 		services.openssh.passwordAuthentication = true;
- 		services.openssh.permitRootLogin = "yes";
- 		users.users.root.initialPassword = "root";
+nix.extraOptions = "experimental-features = nix-command flakes";
+services.openssh.enable = true;
+services.openssh.passwordAuthentication = true;
+services.openssh.permitRootLogin = "yes";
+users.users.root.initialPassword = "root";
 virtualisation.vmware.guest.enable = true;
 virtualisation.docker.enable = true;
 nixpkgs.config.virtualbox.pulseSupport = true;
@@ -214,5 +256,8 @@ fira-code
 nerdfonts
 powerline-fonts
 ];
+programs.zsh.enable = true;
+programs.fish.enable = true;
+users.defaultUserShell = pkgs.fish;
 }
 
