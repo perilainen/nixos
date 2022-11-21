@@ -55,8 +55,9 @@ font-2 = ypn envypn:size=10;-1
 font-3 = Termsynu:size=8;-1
 font-4 = Unifont:size=6;-3
 font-5 = monospace;2
+font-6 = MaterialIcons:size=10;0
 
-modules-left = xworkspaces xwindow
+modules-left = xworkspaces menu-apps
 modules-right = xrandrauto filesystem pulseaudio xkeyboard memory cpu wlan eth date
 
 cursor-click = pointer
@@ -72,6 +73,35 @@ enable-ipc = true
 
 ; override-redirect = true
 
+[module/menu-apps]
+type = custom/menu
+expand-right = true
+
+label-open = Menu
+label-close = X
+label-separator = |
+format-spacing = 1
+
+menu-0-0 = rofi
+menu-0-0-exec = menu-open-1
+menu-0-1 = Power
+menu-0-1-exec = menu-open-2
+
+menu-1-0 = ssh
+menu-1-0-exec = rofi -show ssh
+menu-1-1 = window
+menu-1-1-exec = rofi -show window
+menu-1-2 = files
+menu-1-2-exec = rofi -show filebrowser
+menu-1-3 = run
+menu-1-3-exec = rofi -show run
+menu-1-4 = clip
+menu-1-4-exec = rofi -modi "clipboard:greenclip print" -show clipboard
+
+menu-2-0 = Reboot
+menu-2-0-exec = systemctl reboot
+menu-2-1 = Shutdown
+menu-2-1-exec = systemctl poweroff
 [module/xrandrauto]
 type = custom/script
 exec = echo "auto"

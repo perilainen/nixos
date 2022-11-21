@@ -193,6 +193,7 @@ environment.variables.EDITOR = "nvim";
   #   enable = true;
   #   enableSSHSupport = true;
   # };
+  security.sudo.wheelNeedsPassword = false;
   security.rtkit.enable = true;
   #security.pam.services.lightdm.enable = true;
 

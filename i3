@@ -35,6 +35,11 @@ exec_always --no-startup-id polybar
 # and nm-applet is a desktop environment-independent system tray GUI for it.
 exec --no-startup-id nm-applet
 
+# Start clipster daemon
+exec --no-startup-id clipster -d
+
+# shortcut to selection widget (primary)
+exec --no-startup-id greenclip daemon>/dev/null
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
@@ -51,8 +56,10 @@ bindsym $mod+Return exec kitty
 # kill focused window
 bindsym $mod+w kill
 
+bindsym $mod+Shift+v exec rofi -modi "clipboard:greenclip print" -show clipboard
 bindsym $mod+o exec rofi -show run
 bindsym $mod+p exec rofi -show window
+bindsym $mod+Shift+s exec rofi -show ssh
 
 # start dmenu (a program launcher)
 bindsym $mod+d exec --no-startup-id dmenu_run
