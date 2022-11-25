@@ -25,6 +25,12 @@ in {
     tree-sitter
     lazygit
     haskellPackages.greenclip
+     (writeShellScriptBin "rofi-beats" ''
+    ${builtins.readFile ./scripts/rofi-beats.sh}
+     '')
+     (writeShellScriptBin "rofi-main" ''
+    ${builtins.readFile ./scripts/rofi-main.sh}
+     '')
   ];
   home.pointerCursor = {
     name = "Vanilla-DMZ";
@@ -37,27 +43,28 @@ in {
     #package = unstable.neovim-unwrapped;
     enable = true;
     plugins = with pkgs.vimPlugins; [
-      telescope-nvim
-      nvim-treesitter
+      bufferline-nvim
+      cmp-buffer
+      cmp-nvim-lsp
+      cmp-nvim-lua
+      cmp-path
+      cmp-vsnip
+      lazygit-nvim
+      lsp_signature-nvim
+      markdown-preview-nvim
+      nvim-cmp
       nvim-lspconfig
       nvim-tree-lua
+      nvim-treesitter
       nvim-web-devicons
-      rust-tools-nvim
-      nvim-cmp
-      cmp-nvim-lsp
-      cmp-path
-      cmp-buffer
-      cmp-vsnip
-      vim-vsnip
-      cmp-nvim-lua
-      lsp_signature-nvim
-      vim-commentary
-      which-key-nvim
-      packer-nvim
-      toggleterm-nvim
-      bufferline-nvim
       onedark-nvim
-      lazygit-nvim
+      packer-nvim
+      rust-tools-nvim
+      telescope-nvim
+      toggleterm-nvim
+      vim-commentary
+      vim-vsnip
+      which-key-nvim
     ];
     extraConfig = "lua << EOF\n" + builtins.readFile ./neovim/init.lua + "\nEOF";
   };

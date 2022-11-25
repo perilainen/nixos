@@ -60,6 +60,7 @@ bindsym $mod+Shift+v exec rofi -modi "clipboard:greenclip print" -show clipboard
 bindsym $mod+o exec rofi -show run
 bindsym $mod+p exec rofi -show window
 bindsym $mod+Shift+s exec rofi -show ssh
+bindsym $mod+Shift+p exec rofi-main
 
 # start dmenu (a program launcher)
 bindsym $mod+d exec --no-startup-id dmenu_run
@@ -108,7 +109,7 @@ bindsym $mod+t layout tabbed
 bindsym $mod+e layout toggle split
 
 # toggle tiling / floating
-bindsym $mod+Shift+space floating toggle
+bindsym $mod+Shift+f floating toggle
 
 # change focus between tiling / floating windows
 bindsym $mod+space focus mode_toggle
