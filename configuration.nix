@@ -10,12 +10,15 @@ let
 in
 {
   imports =
-    [ # Include the results of the hardware scan.
+    [
+      # Include the results of the hardware scan.
       ./hardware-configuration.nix
-    (import "${home-manager}/nixos")
- #   ./gnome.nix
+      (import "${home-manager}/nixos")
+      ./vmware-guest.nix
+      #   ./gnome.nix
     ];
 
+  disabledModules = [ "virtualisation/vmware-guest.nix" ];
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -42,33 +45,33 @@ in
 
   # Enable the X11 windowing system.
   #environment.gnome.excludePackages  = (with pkgs; [
-   # gnome-photos
-   # gnome-tour]);
+  # gnome-photos
+  # gnome-tour]);
   services.xserver = {
     dpi = 220;
     enable = true;
     layout = "us,se";
     xkbOptions = "grp:win_space_toggle";
-  #  xkbVariant = "altgr-intl";
+    #  xkbVariant = "altgr-intl";
     /* xbdModel = "pc105"; */
     desktopManager = {
       xterm.enable = false;
       wallpaper.mode = "fill";
-   #   gnome.enable = true;
+      #   gnome.enable = true;
       #gnome.flashback.enableMetacity= true;
 
 
     };
     displayManager = {
-    #  gdm.enable = true;
-    #  gdm.wayland = false;
+      #  gdm.enable = true;
+      #  gdm.wayland = false;
       defaultSession = "none+i3";
       lightdm.enable = true;
     };
     windowManager.i3 = {
-    #  gnome.enable = true;
-    enable = true;
-    package = pkgs.i3-gaps;
+      #  gnome.enable = true;
+      enable = true;
+      package = pkgs.i3-gaps;
       extraPackages = with pkgs; [
         dmenu
         i3status
@@ -77,21 +80,21 @@ in
       ];
     };
     libinput.enable = true;
-};
-#services.dbus.packages = [pkgs.dconf];
-#services.udev.packages = [pkgs.gnome3.gnome-settings-daemon];
-#hardware.video.hidpi.enable = true;
+  };
+  #services.dbus.packages = [pkgs.dconf];
+  #services.udev.packages = [pkgs.gnome3.gnome-settings-daemon];
+  #hardware.video.hidpi.enable = true;
 
 
 
-  
+
 
 
   # Configure keymap in X11
   # services.xserver.layout = "us";
   # services.xserver.xkbOptions = {
   #   "eurosign:e";
- #    "caps:escape" # map caps to escape.
+  #    "caps:escape" # map caps to escape.
   # };
 
   # Enable CUPS to print documents.
@@ -100,28 +103,28 @@ in
   # Enable sound.
 
 
-sound = {
+  sound = {
     enable = true;
     extraConfig = ''
-      pcm.!default {
-        type hw
-	card 1
-      }
-      ctl.!default {
-        type hw
-	card 1
-      }
+            pcm.!default {
+              type hw
+      	card 1
+            }
+            ctl.!default {
+              type hw
+      	card 1
+            }
     '';
-};
-services.pipewire = {
-  enable = true;
-  alsa.enable = true;
-  alsa.support32Bit = true;
-  pulse.enable = true;
-  # If you want to use JACK applications, uncomment this
-  jack.enable = true;
-};
- services.pipewire.config.pipewire-pulse = {
+  };
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    # If you want to use JACK applications, uncomment this
+    jack.enable = true;
+  };
+  services.pipewire.config.pipewire-pulse = {
     "pulse.properties" = {
       "server.address" = [
         # default:
@@ -135,56 +138,57 @@ services.pipewire = {
   hardware.pulseaudio.extraClientConf = ''
     default-server=unix:/tmp/pulse-for-all
   '';
- # hardware.pulseaudio.enable = true;
- # hardware.pulseaudio.support32Bit = true;
+  # hardware.pulseaudio.enable = true;
+  # hardware.pulseaudio.support32Bit = true;
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
-environment.variables.EDITOR = "nvim";
+  environment.variables.EDITOR = "nvim";
 
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-   users.users.pejo= {
-     isNormalUser = true;
-     extraGroups = [ "wheel" "docker" "root"]; # Enable ‘sudo’ for the user.
-     packages = with pkgs; [
-     ];
-   };
+  users.users.pejo = {
+    isNormalUser = true;
+    extraGroups = [ "wheel" "docker" "root" ]; # Enable ‘sudo’ for the user.
+    password = "pejo";
+    packages = with pkgs; [
+    ];
+  };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-   environment.systemPackages = with pkgs; [
-     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-     wget
-     neovim
-     #llvmPackages.clang-unwrapped
-     #build-essential
-     #libssl1.0.0
-     #libasound2
-     dmenu
-     gnome.gnome-flashback
-     tmux
-     #SDL
-     mpv
-     nerdfonts
-     pulseaudioFull
-     rustup
+  environment.systemPackages = with pkgs; [
+    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    wget
+    neovim
+    #llvmPackages.clang-unwrapped
+    #build-essential
+    #libssl1.0.0
+    #libasound2
+    dmenu
+    gnome.gnome-flashback
+    tmux
+    #SDL
+    mpv
+    nerdfonts
+    pulseaudioFull
+    rustup
     # gcc
     llvm
     libllvm
     # libclang
     clang-tools
     # llvmPackages.libclang
-     protobuf
+    protobuf
     # clang
-     (writeShellScriptBin "xrandr-auto" ''
-     xrandr --output Virtual-1 --auto
-     '')
-   ];
-   programs.ssh.startAgent = true;
-   programs.git= {
-     enable = true;
-     };
+    (writeShellScriptBin "xrandr-auto" ''
+      xrandr --output Virtual-1 --auto
+    '')
+  ];
+  programs.ssh.startAgent = true;
+  programs.git = {
+    enable = true;
+  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -199,7 +203,7 @@ environment.variables.EDITOR = "nvim";
 
   services.gnome = {
     gnome-keyring.enable = true;
-    };
+  };
 
 
   # List services that you want to enable:
@@ -224,41 +228,41 @@ environment.variables.EDITOR = "nvim";
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-system.stateVersion = "22.05"; # Did you read the comment?
-nix.package = pkgs.nixUnstable;
-nix.extraOptions = "experimental-features = nix-command flakes";
-services.openssh.enable = true;
-services.openssh.passwordAuthentication = true;
-services.openssh.permitRootLogin = "yes";
-users.users.root.initialPassword = "root";
-virtualisation.vmware.guest.enable = true;
-virtualisation.docker.enable = true;
-nixpkgs.config.virtualbox.pulseSupport = true;
-networking.interfaces.ens33.useDHCP = true;
+  system.stateVersion = "22.05"; # Did you read the comment?
+  nix.package = pkgs.nixUnstable;
+  nix.extraOptions = "experimental-features = nix-command flakes";
+  services.openssh.enable = true;
+  services.openssh.passwordAuthentication = true;
+  services.openssh.permitRootLogin = "yes";
+  users.users.root.initialPassword = "root";
+  virtualisation.vmware.guest.enable = true;
+  virtualisation.docker.enable = true;
+  nixpkgs.config.virtualbox.pulseSupport = true;
+  networking.interfaces.ens160.useDHCP = true;
 
 
-fileSystems."/host" = {
-  fsType = "fuse./run/current-system/sw/bin/vmhgfs-fuse";
-  device = ".host:/";
-  options = [
-    "umask=22"
-    "uid=1000"
-    "gid=1000"
-    "allow_other"
-    "auto_unmount"
-    "defaults"
-    ];
-  };
-home-manager.users.pejo = import ./pejo-home.nix;
+  # fileSystems."/host" = {
+  #   fsType = "fuse./run/current-system/sw/bin/vmhgfs-fuse";
+  #   device = ".host:/";
+  #   options = [
+  #     "umask=22"
+  #     "uid=1000"
+  #     "gid=1000"
+  #     "allow_other"
+  #     "auto_unmount"
+  #     "defaults"
+  #     ];
+  #   };
+  home-manager.users.pejo = import ./pejo-home.nix;
 
 
-fonts.fonts = with pkgs; [
-fira-code
-nerdfonts
-powerline-fonts
-];
-programs.zsh.enable = true;
-programs.fish.enable = true;
-users.defaultUserShell = pkgs.fish;
+  fonts.fonts = with pkgs; [
+    fira-code
+    nerdfonts
+    powerline-fonts
+  ];
+  programs.zsh.enable = true;
+  programs.fish.enable = true;
+  users.defaultUserShell = pkgs.fish;
 }
 
